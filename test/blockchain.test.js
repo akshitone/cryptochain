@@ -1,68 +1,63 @@
-const assert = require("assert");
-
 const Blockchain = require("../blockchain");
 const Block = require("../block");
-const cryptoHash = require("../cryptoHash");
 
 describe("Blockchain", () => {
+  let blockchain;
+
+  beforeEach(() => {
+    blockchain = new Blockchain();
+  });
+
   it("contains a `chain` Array instance", () => {
-    const blockchain = new Blockchain();
-    assert(blockchain.chain instanceof Array);
+    expect(blockchain.chain instanceof Array).toBe(true);
   });
 
   it("starts with the genesis block", () => {
-    const blockchain = new Blockchain();
-    assert.deepEqual(blockchain.chain[0], Block.genesis());
+    expect(blockchain.chain[0]).toEqual(Block.genesis());
   });
 
   it("adds a new block to the chain", () => {
-    const blockchain = new Blockchain();
-    const data = "foo";
-    blockchain.addBlock({ data });
+    const newData = "foo bar";
+    blockchain.addBlock({ data: newData });
 
-    assert.deepEqual(blockchain.chain[blockchain.chain.length - 1].data, data);
+    expect(blockchain.chain[blockchain.chain.length - 1].data).toEqual(newData);
   });
 
   describe("isValidChain()", () => {
     describe("when the chain does not start with the genesis block", () => {
-      const blockchain = new Blockchain();
-      blockchain.chain[0] = { data: "fake-genesis" };
-
       it("returns false", () => {
-        assert(Blockchain.isValidChain(blockchain.chain) === false);
+        blockchain.chain[0] = { data: "fake-genesis" };
+
+        expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
       });
     });
 
     describe("when the chain starts with the genesis block and has multiple blocks", () => {
-      describe("and the lastHash reference has changed", () => {
-        const blockchain = new Blockchain();
-        const data = "foo";
-        blockchain.addBlock({ data });
-        blockchain.chain[1].lastHash = "bar";
+      beforeEach(() => {
+        blockchain.addBlock({ data: "Bears" });
+        blockchain.addBlock({ data: "Beets" });
+        blockchain.addBlock({ data: "Battlestar Galactica" });
+      });
 
+      describe("and a previousHash reference has changed", () => {
         it("returns false", () => {
-          assert(Blockchain.isValidChain(blockchain.chain) === false);
+          blockchain.chain[2].previousHash = "broken-previousHash";
+
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
       });
 
       describe("and the chain contains a block with an invalid field", () => {
-        const blockchain = new Blockchain();
-        const data = "foo";
-        blockchain.addBlock({ data });
-        blockchain.chain[1].data = "bar";
-
         it("returns false", () => {
-          assert(Blockchain.isValidChain(blockchain.chain) === false);
+          blockchain.chain[2].data = "some-bad-and-evil-data";
+
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
       });
 
       describe("and the chain does not contain any invalid blocks", () => {
-        const blockchain = new Blockchain();
-        const data = "foo";
-        blockchain.addBlock({ data });
-
         it("returns true", () => {
-          assert(Blockchain.isValidChain(blockchain.chain) === true);
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
         });
       });
     });
