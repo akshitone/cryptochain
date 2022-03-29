@@ -1,8 +1,8 @@
 const GENESIS_BLOCK = {
-  timestamp: 1,
-  previousHash: "-----",
-  hash: "hash-one",
-  data: [],
+  data: "Genesis Block",
+  hash: "0",
+  previousHash: "0",
+  timestamp: Date.now(),
 };
 
 module.exports = { GENESIS_BLOCK };

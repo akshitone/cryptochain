@@ -1,63 +1,68 @@
+const assert = require("assert");
+
 const Blockchain = require("../blockchain");
 const Block = require("../block");
+const cryptoHash = require("../cryptoHash");
 
 describe("Blockchain", () => {
-  let blockchain;
-
-  beforeEach(() => {
-    blockchain = new Blockchain();
-  });
-
   it("contains a `chain` Array instance", () => {
-    expect(blockchain.chain instanceof Array).toBe(true);
+    const blockchain = new Blockchain();
+    assert(blockchain.chain instanceof Array);
   });
 
   it("starts with the genesis block", () => {
-    expect(blockchain.chain[0]).toEqual(Block.genesis());
+    const blockchain = new Blockchain();
+    assert.deepEqual(blockchain.chain[0], Block.genesis());
   });
 
   it("adds a new block to the chain", () => {
-    const newData = "foo bar";
-    blockchain.addBlock({ data: newData });
+    const blockchain = new Blockchain();
+    const data = "foo";
+    blockchain.addBlock({ data });
 
-    expect(blockchain.chain[blockchain.chain.length - 1].data).toEqual(newData);
+    assert.deepEqual(blockchain.chain[blockchain.chain.length - 1].data, data);
   });
 
   describe("isValidChain()", () => {
     describe("when the chain does not start with the genesis block", () => {
-      it("returns false", () => {
-        blockchain.chain[0] = { data: "fake-genesis" };
+      const blockchain = new Blockchain();
+      blockchain.chain[0] = { data: "fake-genesis" };
 
-        expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+      it("returns false", () => {
+        assert(Blockchain.isValidChain(blockchain.chain) === false);
       });
     });
 
     describe("when the chain starts with the genesis block and has multiple blocks", () => {
-      beforeEach(() => {
-        blockchain.addBlock({ data: "Bears" });
-        blockchain.addBlock({ data: "Beets" });
-        blockchain.addBlock({ data: "Battlestar Galactica" });
-      });
+      describe("and the lastHash reference has changed", () => {
+        const blockchain = new Blockchain();
+        const data = "foo";
+        blockchain.addBlock({ data });
+        blockchain.chain[1].previousHash = "bar";
 
-      describe("and a previousHash reference has changed", () => {
         it("returns false", () => {
-          blockchain.chain[2].previousHash = "broken-previousHash";
-
-          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+          assert(Blockchain.isValidChain(blockchain.chain) === false);
         });
       });
 
       describe("and the chain contains a block with an invalid field", () => {
-        it("returns false", () => {
-          blockchain.chain[2].data = "some-bad-and-evil-data";
+        const blockchain = new Blockchain();
+        const data = "foo";
+        blockchain.addBlock({ data });
+        blockchain.chain[1].data = "bar";
 
-          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+        it("returns false", () => {
+          assert(Blockchain.isValidChain(blockchain.chain) === false);
         });
       });
 
       describe("and the chain does not contain any invalid blocks", () => {
+        const blockchain = new Blockchain();
+        const data = "foo";
+        blockchain.addBlock({ data });
+
         it("returns true", () => {
-          expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
+          assert(Blockchain.isValidChain(blockchain.chain) === true);
         });
       });
     });
