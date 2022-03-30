@@ -6,18 +6,16 @@ class Blockchain {
     this.chain = [Block.genesis()];
   }
 
-  // used to add a new block to the blockchain
   addBlock({ data }) {
     const newBlock = Block.mineBlock({
       lastBlock: this.chain[this.chain.length - 1],
       data,
-    }); // create a new block
+    });
 
-    this.chain.push(newBlock); // add the new block to the blockchain
+    this.chain.push(newBlock);
   }
 
   static isValidChain(chain) {
-    // check the first block is the genesis block
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis()))
       return false;
 
@@ -26,11 +24,23 @@ class Blockchain {
       const lastBlock = chain[i - 1];
 
       if (previousHash !== lastBlock.hash) return false;
-
       if (hash !== cryptoHash(timestamp, previousHash, data)) return false;
     }
-
     return true;
+  }
+
+  replaceChain(newChain) {
+    if (newChain.length <= this.chain.length) {
+      console.log("The incoming chain must be longer.");
+      return;
+    }
+
+    if (!Blockchain.isValidChain(newChain)) {
+      console.log("The incoming chain must be invalid.");
+      return;
+    }
+
+    this.chain = newChain;
   }
 }
 
