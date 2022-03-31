@@ -13,6 +13,7 @@ class Blockchain {
     });
 
     this.chain.push(newBlock);
+    return newBlock;
   }
 
   static isValidChain(chain) {
