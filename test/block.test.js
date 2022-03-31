@@ -4,6 +4,7 @@ const assert = require("assert");
 
 const Block = require("../block");
 const cryptoHash = require("../cryptoHash");
+const hexToBinary = require("hex-to-binary");
 
 describe("Block", () => {
   const data = "bar";
@@ -65,7 +66,7 @@ describe("Block", () => {
 
     it("should sets a hash based on the difficulty", () => {
       assert.deepEqual(
-        minedBlock.hash.substring(0, minedBlock.difficulty),
+        hexToBinary(minedBlock.hash).substring(0, minedBlock.difficulty),
         "0".repeat(minedBlock.difficulty)
       );
     });

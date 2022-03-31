@@ -25,6 +25,8 @@ class Blockchain {
 
       const lastBlock = chain[i - 1];
 
+      if (Math.abs(lastBlock.difficulty - difficulty) > 1) return false;
+
       if (previousHash !== lastBlock.hash) return false;
 
       if (hash !== cryptoHash(timestamp, previousHash, data, nonce, difficulty))
