@@ -1,8 +1,7 @@
 const assert = require("assert");
 
 const Wallet = require("../../wallet");
-const { verifySignature } = require("../../utils/index");
-const cryptoHash = require("../../utils/cryptoHash");
+const { verifySignature, cryptoHash } = require("../../utils");
 
 describe("Wallet", () => {
   let wallet;

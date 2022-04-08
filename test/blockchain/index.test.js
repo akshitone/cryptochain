@@ -2,7 +2,6 @@ const assert = require("assert");
 
 const Blockchain = require("../../blockchain");
 const Block = require("../../blockchain/block");
-const cryptoHash = require("../../utils/cryptoHash");
 
 describe("Blockchain", () => {
   const blockchain = new Blockchain();
