@@ -7,14 +7,14 @@ const CHANNELS = {
 
 class PubSub {
   constructor({ blockchain }) {
-    this.blockchain = blockchain;
+    this.blockchain = blockchain; // Set the blockchain
 
-    this.publisher = this.connect();
-    this.subscriber = this.connect();
+    this.publisher = this.connect(); // Connect to the publisher
+    this.subscriber = this.connect(); // Connect to the subscriber
 
     this.publisher
       .then((channel) => {
-        channel.assertQueue(CHANNELS.TEST);
+        channel.assertQueue(CHANNELS.TEST); // Create the test queue
       })
       .catch((err) => {
         console.log(err);
@@ -23,8 +23,8 @@ class PubSub {
 
   async connect() {
     try {
-      const connection = await amqp.connect("amqp://localhost");
-      return await connection.createChannel();
+      const connection = await amqp.connect("amqp://localhost"); // Connect to the broker on localhost
+      return await connection.createChannel(); // Create a channel
     } catch (err) {
       console.log(err);
     }
@@ -33,8 +33,8 @@ class PubSub {
   publish({ message, queue }) {
     this.publisher
       .then((channel) => {
-        channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
-        this.handleMessage({ message, queue });
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(message))); // Send the message to the queue
+        this.handleMessage({ message, queue }); // Handle the message
       })
       .catch((err) => {
         console.log(err);
@@ -43,9 +43,9 @@ class PubSub {
 
   handleMessage({ message, queue }) {
     console.log(`Message sent to ${queue} queue with message: ${message}`);
-    const parsedMessage = JSON.parse(message);
+    const parsedMessage = JSON.parse(message); // Parse the message
     if (queue === CHANNELS.BLOCKCHAIN) {
-      this.blockchain.replaceChain(parsedMessage);
+      this.blockchain.replaceChain(parsedMessage); // Replace the chain with the new one
     }
   }
 
@@ -53,9 +53,9 @@ class PubSub {
     this.subscriber
       .then((channel) => {
         channel.consume(queue, (message) => {
-          const data = JSON.parse(message.content.toString());
+          const data = JSON.parse(message.content.toString()); // Parse the message
           console.log(data);
-        });
+        }); // Consume the queue
       })
       .catch((err) => {
         console.log(err);
@@ -66,7 +66,7 @@ class PubSub {
     this.publish({
       message: JSON.stringify(this.blockchain.chain),
       queue: CHANNELS.BLOCKCHAIN,
-    });
+    }); // Broadcast the chain
   }
 }
 

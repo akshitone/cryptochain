@@ -1,9 +1,9 @@
-const { GENESIS_BLOCK, MINE_RATE } = require("../config");
+const { GENESIS_BLOCK, MINE_RATE } = require("../../config");
 
 const assert = require("assert");
 
-const Block = require("../blockchain/block");
-const cryptoHash = require("../utils/cryptoHash");
+const Block = require("../../blockchain/block");
+const cryptoHash = require("../../utils/cryptoHash");
 const hexToBinary = require("hex-to-binary");
 
 describe("Block", () => {

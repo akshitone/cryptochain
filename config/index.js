@@ -10,4 +10,11 @@ const GENESIS_BLOCK = {
   nonce: 0,
 };
 
-module.exports = { GENESIS_BLOCK, INITIAL_DIFFICULTY, MINE_RATE };
+const STARTING_BALANCE = 1000;
+
+module.exports = {
+  GENESIS_BLOCK,
+  INITIAL_DIFFICULTY,
+  MINE_RATE,
+  STARTING_BALANCE,
+};

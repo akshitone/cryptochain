@@ -17,6 +17,7 @@ class Blockchain {
   }
 
   static isValidChain(chain) {
+    // Check if the genesis block is valid (the first block in the chain)
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis()))
       return false;
 
@@ -24,12 +25,13 @@ class Blockchain {
       const { data, hash, previousHash, timestamp, nonce, difficulty } =
         chain[i];
 
-      const lastBlock = chain[i - 1];
+      const lastBlock = chain[i - 1]; // Get the last block in the chain
 
-      if (Math.abs(lastBlock.difficulty - difficulty) > 1) return false;
+      if (Math.abs(lastBlock.difficulty - difficulty) > 1) return false; // Check if the difficulty is valid
 
-      if (previousHash !== lastBlock.hash) return false;
+      if (previousHash !== lastBlock.hash) return false; // Check if the previous hash is valid
 
+      // Check if the hash is valid
       if (hash !== cryptoHash(timestamp, previousHash, data, nonce, difficulty))
         return false;
     }
