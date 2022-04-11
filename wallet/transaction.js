@@ -1,4 +1,5 @@
 const { v4: uuid } = require("uuid");
+const { verifySignature } = require("../utils");
 
 class Transaction {
   constructor({ senderWallet, recipient, amount }) {
@@ -26,6 +27,41 @@ class Transaction {
       address: senderWallet.publicKey, // Address of transaction
       signature,
     };
+  }
+
+  // Validate transaction with outputMap and input
+  static validTransaction(transaction) {
+    const { outputMap, input } = transaction;
+    const { address, amount, signature } = input;
+
+    // Sum of all output amounts in transaction outputMap
+    const outputTotal = Object.values(outputMap).reduce(
+      (total, outputAmount) => {
+        return total + outputAmount;
+      }
+    );
+
+    // Check if transaction amount is equal to sum of output amounts
+    if (amount !== outputTotal) {
+      console.error("Amount does not match outputTotal");
+      return false;
+    }
+
+    if (!input) return false; // Check if input is defined in transaction
+    if (!outputMap[address]) return false; // Check if outputMap has address as key in transaction
+
+    // Check if signature is valid for outputMap
+    if (
+      !verifySignature({
+        publicKey: address,
+        data: outputMap,
+        signature: signature,
+      })
+    ) {
+      console.error("Invalid signature");
+      return false;
+    }
+    return true;
   }
 }
 
