@@ -29,6 +29,25 @@ class Transaction {
     };
   }
 
+  // Update transaction with new outputMap and input
+  update({ senderWallet, recipient, amount }) {
+    // Check if sender has enough balance
+    if (amount > this.outputMap[senderWallet.publicKey])
+      throw new Error("Amount exceeds balance");
+
+    // check if recipient does not exist in outputMap, set to amount
+    if (!this.outputMap[recipient]) this.outputMap[recipient] = amount;
+    // check if recipient exists in outputMap, add amount to recipient
+    else this.outputMap[recipient] += amount;
+
+    this.outputMap = this.createOutputMap({ senderWallet, recipient, amount }); // Update outputMap
+
+    this.input = this.createInput({
+      senderWallet,
+      signature: senderWallet.sign(this.outputMap), // Sign transaction with sender's private key
+    });
+  }
+
   // Validate transaction with outputMap and input
   static validTransaction(transaction) {
     const { outputMap, input } = transaction;
